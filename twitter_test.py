@@ -23,3 +23,12 @@ def test_tweet_long_message():
     with pytest.raises(Exception):
         twitter.tweet('a' * 160)
     assert twitter.tweets == []
+
+
+def test_find_hash():
+    twitter = Twitter()
+    message = "Test #hash test"
+    twitter.tweet(message)
+    assert 'hash' in twitter.find_hash(message)
+
+    

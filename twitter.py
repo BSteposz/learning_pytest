@@ -1,5 +1,7 @@
+import re
 
-class Twitter():
+
+class Twitter:
 
     def __init__(self):
         self.tweets = []
@@ -9,3 +11,6 @@ class Twitter():
             self.tweets.append(message)
         else:
             raise Exception("wiadomość za długa ")
+
+    def find_hash(self, message):
+        return re.findall('#(\w+) ', message)
