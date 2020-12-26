@@ -13,4 +13,4 @@ class Twitter:
             raise Exception("wiadomość za długa ")
 
     def find_hash(self, message):
-        return re.findall('#(\w+) ', message)
+        return [m.lower() for m in re.findall('#(\w+)', message)]

@@ -3,32 +3,39 @@ import pytest
 from twitter import Twitter
 
 
-def test_init():
+@pytest.fixture
+def twitter():
+    twitter = Twitter()
+    return twitter
+
+
+def test_init(twitter):
     """ Initialization test """
-    twitter = Twitter()
-    assert  twitter
+    assert twitter
 
 
-def test_single_message():
+def test_single_message(twitter):
     """ Single message test """
-    twitter = Twitter()
     twitter.tweet('Test message')
     assert twitter.tweets == ['Test message']
 
 
-def test_tweet_long_message():
+def test_tweet_long_message(twitter):
     """Test assert of too long message"""
-    twitter = Twitter()
     # this line check that exception is rised
     with pytest.raises(Exception):
         twitter.tweet('a' * 160)
     assert twitter.tweets == []
 
 
-def test_find_hash():
-    twitter = Twitter()
-    message = "Test #hash test"
-    twitter.tweet(message)
-    assert 'hash' in twitter.find_hash(message)
+@pytest.mark.parametrize("message, expected", (
+        ('Test #first message', ['first']),
+        ('#first Test  message', ['first']),
+        ('Test #FIRST message', ['first']),
+        ('Test  message #FIRST', ['first']),
+        ('Test  message #FIRST #second', ['first', "second"])
 
-    
+))
+def test_find_hash(twitter, message, expected):
+    """ Test find hashtag function """
+    assert twitter.find_hash(message) == expected
