@@ -3,11 +3,11 @@ import pytest
 from twitter import Twitter
 
 
-@pytest.fixture
-def twitter():
-    twitter = Twitter()
-    return twitter
-
+@pytest.fixture(params=[None, 'test.txt'], name='twitter')
+def fixture_twitter(request):
+    twitter = Twitter(backend=request.param)
+    yield twitter
+    twitter.delete()
 
 def test_init(twitter):
     """ Initialization test """
@@ -24,7 +24,7 @@ def test_tweet_long_message(twitter):
     """Test assert of too long message"""
     # this line check that exception is rised
     with pytest.raises(Exception):
-        twitter.tweet('a' * 160)
+        twitter.tweet('a' * 161)
     assert twitter.tweets == []
 
 
