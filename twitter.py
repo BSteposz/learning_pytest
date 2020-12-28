@@ -1,9 +1,11 @@
 import re, os, json
 from urllib.parse import urljoin
+import requests
 
-from pip._vendor import requests
 
-USER_API = "https://api.github.com/users"
+
+USER_API = "https://api.github.com/users/"
+
 
 class Twitter:
 

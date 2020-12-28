@@ -3,6 +3,17 @@ import pytest
 from twitter import Twitter
 
 
+class ResponseGetMock:
+
+    def json(self):
+        return {'avatar_url': 'test'}
+
+
+@pytest.fixture(autouse=True)
+def no_request(monkeypatch):
+    monkeypatch.delattr('requests.sessions.Session.request')
+
+
 @pytest.fixture
 def backend(tmpdir):
     temp_file = tmpdir.join('test.txt')
@@ -10,12 +21,22 @@ def backend(tmpdir):
     return temp_file
 
 
+@pytest.fixture(params=[None, 'python'])
+def username(request):
+    return request.param
+
+
 @pytest.fixture(params=['list', 'backend'], name='twitter')
-def fixture_twitter(backend, request):
+def fixture_twitter(backend, username, request, monkeypatch):
     if request.param == 'list':
-        twitter = Twitter()
+        twitter = Twitter(username=username)
     elif request.param == 'backend':
-        twitter = Twitter(backend=backend)
+        twitter = Twitter(backend=backend, username=username)
+
+    def monkey_return():
+        return 'test'
+
+    monkeypatch.setattr(twitter, 'get_user_avatar', monkey_return)
     return twitter
 
 
@@ -60,3 +81,10 @@ def test_init_two_twitter_classes(backend):
 def test_find_hash(twitter, message, expected):
     """ Test find hashtag function """
     assert twitter.find_hash(message) == expected
+
+
+def test_tweet_with_username(twitter):
+    if not twitter.username:
+        pytest.skip()
+    twitter.tweet('Test')
+    assert twitter.tweets == [{'message': 'Test', 'avatar': 'test'}]
