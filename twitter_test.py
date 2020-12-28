@@ -28,7 +28,7 @@ def test_init(twitter):
 def test_single_message(twitter):
     """ Single message test """
     twitter.tweet('Test message')
-    assert twitter.tweets == ['Test message']
+    assert twitter.tweet_messages == ['Test message']
 
 
 def test_tweet_long_message(twitter):
@@ -36,7 +36,7 @@ def test_tweet_long_message(twitter):
     # this line check that exception is rised
     with pytest.raises(Exception):
         twitter.tweet('a' * 161)
-    assert twitter.tweets == []
+    assert twitter.tweet_messages == []
 
 
 def test_init_two_twitter_classes(backend):
@@ -46,7 +46,7 @@ def test_init_two_twitter_classes(backend):
     twiter1.tweet('test1')
     twiter1.tweet('test2')
 
-    assert twiter2.tweets == ['test1', 'test2']
+    assert twiter2.tweet_messages == ['test1', 'test2']
 
 
 @pytest.mark.parametrize("message, expected", (
