@@ -9,6 +9,8 @@ USER_API = "https://api.github.com/users/"
 
 class Twitter:
 
+    _version = '1.0'
+
     def __init__(self, backend=None, username=None):
         self.backend = backend
         self._tweets = []
@@ -37,7 +39,10 @@ class Twitter:
     def tweet(self, message):
         if len(message) > 160:
             raise Exception("wiadomość za długa ")
-        self.tweets.append({'message': message, 'avatar': self.get_user_avatar()})
+        self.tweets.append({'message': message,
+                            'avatar': self.get_user_avatar(),
+                            'hash': self.find_hash(message)
+                            })
         if self.backend:
             self.backend.write(json.dumps(self.tweets))
 
